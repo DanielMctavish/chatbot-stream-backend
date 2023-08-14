@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Owner {
+  id           String       @id @default(cuid())
+  phone_number String
+  name         String
+  email        String
+  created_at   DateTime?    @default(now())
+  StreamChat   StreamChat[]
+}
+
+model Client {
+  id           String  @id @default(cuid())
+  phone_number String
+  email        String? @unique
+  password     String?
+}
+
+model StreamChat {
+  id                     String          @id @default(cuid())
+  owner                  Owner           @relation(fields: [owner_id], references: [id])
+  owner_id               String
+  welcome_message        String
+  stream_lines_responses LinesResponse[]
+}
+
+model LinesResponse {
+  id               String      @id @default(cuid())
+  intent_message   String
+  response_message String
+  StreamChat       StreamChat? @relation(fields: [streamChat_id], references: [id])
+  streamChat_id    String?
+}
