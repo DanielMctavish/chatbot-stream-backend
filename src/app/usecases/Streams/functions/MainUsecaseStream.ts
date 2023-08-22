@@ -1,5 +1,5 @@
-import IStreamChat from "../../entities/IStreamChat";
-import IResponseStream from "../../responses/IResponseStream";
+import IStreamChat from "../../../entities/IStreamChat";
+import IResponseStream from "../../../responses/IResponseStream";
 import IUsecasesStream from "../IUsecasesStream";
 import createNewStream from "./CreateNewStream";
 import deleteStreamById from "./DeleteStreamById";

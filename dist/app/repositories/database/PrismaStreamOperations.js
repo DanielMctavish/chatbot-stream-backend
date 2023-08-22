@@ -45,7 +45,7 @@ class PrismaStreamOperations {
                 const linesResponsesUpdateData = stream_lines_responses.map(response => ({
                     where: { id: response.id },
                     data: {
-                        conditional_message: response.conditional_message,
+                        conditional_message: response.intent_message,
                         response_message: response.response_message,
                         StreamChat: response.StreamChat
                     }

@@ -1,5 +1,5 @@
-import IStreamChat from "../entities/IStreamChat"
-import IResponseStream from "../responses/IResponseStream"
+import IStreamChat from "../../entities/IStreamChat"
+import IResponseStream from "../../responses/IResponseStream"
 
 interface IUsecasesStream {
     CreateNewStream(data: IStreamChat): Promise<IResponseStream>

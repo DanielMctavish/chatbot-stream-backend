@@ -1,5 +1,5 @@
-import PrismaStreamOperations from "../../repositories/database/PrismaStreamOperations";
-import IResponseStream from "../../responses/IResponseStream";
+import PrismaStreamOperations from "../../../repositories/database/PrismaStreamOperations";
+import IResponseStream from "../../../responses/IResponseStream";
 const prismaStream = new PrismaStreamOperations()
 
 

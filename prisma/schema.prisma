@@ -11,12 +11,13 @@ datasource db {
 }
 
 model Owner {
-  id           String       @id @default(cuid())
-  phone_number String
-  name         String
-  email        String
-  created_at   DateTime?    @default(now())
-  StreamChat   StreamChat[]
+  id                String       @id @default(cuid())
+  phone_number      String
+  name              String
+  email             String
+  connection_status Boolean
+  created_at        DateTime?    @default(now())
+  StreamChat        StreamChat[]
 }
 
 model Client {

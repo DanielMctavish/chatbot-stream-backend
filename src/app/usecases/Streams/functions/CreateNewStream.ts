@@ -1,6 +1,6 @@
-import IStreamChat from "../../entities/IStreamChat";
-import PrismaStreamOperations from "../../repositories/database/PrismaStreamOperations";
-import IResponseStream from "../../responses/IResponseStream";
+import IStreamChat from "../../../entities/IStreamChat";
+import PrismaStreamOperations from "../../../repositories/database/PrismaStreamOperations";
+import IResponseStream from "../../../responses/IResponseStream";
 const prismaStream = new PrismaStreamOperations()
 
 
