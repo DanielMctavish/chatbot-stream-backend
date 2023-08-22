@@ -1,14 +1,6 @@
 import * as Venom from "venom-bot"
 
-
-Venom.create({
-    session: 'teste-whatasapp bot' //name of session
-}).then(async (client) => {
-    await start(client)
-}).catch((erro) => {
-    console.log(erro);
-});
-
+const venomConnect = Venom
 
 
 function start(client: any) {
@@ -24,3 +16,6 @@ function start(client: any) {
 
     })
 }
+
+
+export default venomConnect;

@@ -6,8 +6,9 @@ import { ApplyUseCase } from '../middlewares/ApplyUseCase';
 const router = Router()
 const mainWhatsapp = new MainWhatsappConnectivity()
 
-router.post("/connect-whatsapp", (req, res) => { ApplyUseCase(res, mainWhatsapp.CreateConnection), req.query, req.body })
-router.patch("/desconnect-whatsapp", (req, res) => { ApplyUseCase(res, mainWhatsapp.Desconnect), req.query, req.body })
+router.post("/connect", (req, res) => { ApplyUseCase(res, mainWhatsapp.CreateConnection), req.query, req.body })//
+router.patch("/desconnect", (req, res) => { ApplyUseCase(res, mainWhatsapp.Desconnect), req.query, req.body })
+router.get("/check-status", (req, res) => { ApplyUseCase(res, mainWhatsapp.CheckConnectionStatus) })
 
 
 export default router;
