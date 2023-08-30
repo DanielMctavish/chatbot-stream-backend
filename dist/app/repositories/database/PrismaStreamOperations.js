@@ -14,11 +14,12 @@ const prisma = new client_1.PrismaClient();
 class PrismaStreamOperations {
     Create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { owner_id, stream_lines_responses, welcome_message } = data;
+            const { owner_id, stream_lines_responses, welcome_message, stream_title } = data;
             return yield prisma.streamChat.create({
                 data: {
                     owner_id,
                     welcome_message,
+                    stream_title,
                     stream_lines_responses: {
                         create: stream_lines_responses
                     }
@@ -31,6 +32,18 @@ class PrismaStreamOperations {
             return yield prisma.streamChat.findFirst({
                 where: {
                     id: stream_id
+                },
+                include: { stream_lines_responses: true }
+            });
+        });
+    }
+    FindAll(owner_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield prisma.streamChat.findMany({
+                where: {
+                    owner_id,
+                }, include: {
+                    stream_lines_responses: true
                 }
             });
         });

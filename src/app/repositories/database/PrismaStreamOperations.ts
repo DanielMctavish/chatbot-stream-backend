@@ -8,22 +8,35 @@ class PrismaStreamOperations implements IStreamChatRepositorie {
         const {
             owner_id,
             stream_lines_responses,
-            welcome_message
+            welcome_message,
+            stream_title
         } = data
         return await prisma.streamChat.create({
             data: {
                 owner_id,
                 welcome_message,
+                stream_title,
                 stream_lines_responses: {
                     create: stream_lines_responses
                 }
             }
         })
     }
-    async Find(stream_id: string): Promise<IStreamChat | null> {
+    async Find(stream_id: string): Promise<IStreamChat | any> {
         return await prisma.streamChat.findFirst({
             where: {
                 id: stream_id
+            },
+            include: { stream_lines_responses: true }
+        })
+    }
+
+    async FindAll(owner_id: string): Promise<IStreamChat[]> {
+        return await prisma.streamChat.findMany({
+            where: {
+                owner_id,
+            }, include: {
+                stream_lines_responses: true
             }
         })
     }

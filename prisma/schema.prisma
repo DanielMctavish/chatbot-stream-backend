@@ -30,6 +30,7 @@ model Client {
 model StreamChat {
   id                     String          @id @default(cuid())
   owner                  Owner           @relation(fields: [owner_id], references: [id])
+  stream_title           String
   owner_id               String
   welcome_message        String
   stream_lines_responses LinesResponse[]

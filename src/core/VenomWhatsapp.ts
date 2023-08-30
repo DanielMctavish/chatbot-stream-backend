@@ -2,17 +2,19 @@ import * as Venom from "venom-bot"
 
 const venomConnect = Venom
 
+interface IStreamResponse {
+    intent_message: string
+    response_message: string
+}
 
-function start(client: any) {
+export function start(client: any, stream_responses: IStreamResponse[]) {
     client.onMessage(async (message: any) => {
 
-        if (message.body === 'test1' && message.isGroupMsg === false) {
-            await client.sendText(message.from, 'Teste whatsapp boot DM')
-        }
-
-        if (message.body === 'oi' || message.body === 'olá' || message.body === 'oii' && message.isGroupMsg === false) {
-            await client.sendText(message.from, 'Oi, tudo bem? Sou um bot de teste!')
-        }
+        stream_responses.map(async stream => {
+            if (message.body === stream.intent_message && message.isGroupMsg === false) {
+                await client.sendText(message.from, stream.response_message)
+            }
+        })
 
     })
 }
