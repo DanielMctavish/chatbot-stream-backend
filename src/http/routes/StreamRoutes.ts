@@ -11,8 +11,8 @@ router.post("/create", (req, res) => { ApplyUseCase(res, MainStream.CreateNewStr
 router.get("/find", (req, res) => { ApplyUseCase(res, MainStream.GetStreamById, req.query, req.body) })
 router.get("/find-all", (req, res) => { ApplyUseCase(res, MainStream.FindAllStreams, req.query, req.body) })
 router.patch("/update", (req, res) => { ApplyUseCase(res, MainStream.UpdateStreamById, req.query, req.body) })
+router.patch("/set-stream", (req, res) => { ApplyUseCase(res, MainStream.SetStream, req.query, req.body) })//
 router.delete("/delete", (req, res) => { ApplyUseCase(res, MainStream.DeleteStreamById, req.query, req.body) })
-
 
 
 export default router;

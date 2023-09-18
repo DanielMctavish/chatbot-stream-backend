@@ -8,7 +8,7 @@ const deleteStreamById = async (stream_id: string): Promise<IResponseStream> => 
     if (!stream_id) return { status_code: 404, message: "nenhum id passado" }
 
     try {
-        const currentStream = await prismaStream.Find(stream_id)
+        const currentStream = await prismaStream.Delete(stream_id)
         if (!currentStream) return { status_code: 404, message: 'nenhum fluxo encontrado' }
         return { status_code: 200, message: currentStream }
     } catch (error: any) {

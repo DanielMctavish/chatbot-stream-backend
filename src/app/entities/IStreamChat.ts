@@ -10,6 +10,7 @@ interface linesResponse {
 
 interface IStreamChat {
     id: string
+    stream_set: boolean
     owner?: IOwner
     owner_id: string
     stream_title: string

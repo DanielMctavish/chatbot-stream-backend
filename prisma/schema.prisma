@@ -29,6 +29,7 @@ model Client {
 
 model StreamChat {
   id                     String          @id @default(cuid())
+  stream_set             Boolean
   owner                  Owner           @relation(fields: [owner_id], references: [id])
   stream_title           String
   owner_id               String

@@ -5,6 +5,7 @@ import createNewStream from "./CreateNewStream";
 import deleteStreamById from "./DeleteStreamById";
 import findAllStreams from "./FindAllStreams";
 import getStreamById from "./GetStreamById";
+import setStream, { IStreamRequest } from "./SetStream";
 import updateStreamById from "./UpdateStreamById";
 
 
@@ -21,8 +22,11 @@ class MainUsecaseStream implements IUsecasesStream {
     async UpdateStreamById(data: IStreamChat, params: IRequestStream): Promise<IResponseStream> {
         return await updateStreamById(data, params.stream_id)
     }
-    async DeleteStreamById(params: IRequestStream): Promise<IResponseStream> {
+    async DeleteStreamById(data: any, params: IRequestStream): Promise<IResponseStream> {
         return await deleteStreamById(params.stream_id)
+    }
+    async SetStream(data:IStreamRequest): Promise<IResponseStream> {
+        return await setStream(data)
     }
 }
 

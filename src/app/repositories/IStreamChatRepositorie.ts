@@ -5,5 +5,6 @@ export interface IStreamChatRepositorie {
     Find(stream_id: string): Promise<IStreamChat | null>
     FindAll(owner_id: string): Promise<IStreamChat[]>
     Update(data: Partial<IStreamChat>, stream_id: string): Promise<IStreamChat | null>
+    UpdateSet(set: boolean, stream_id: string): Promise<IStreamChat | null>
     Delete(stream_id: string): Promise<IStreamChat | null>
 }
