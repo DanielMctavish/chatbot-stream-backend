@@ -9,10 +9,10 @@ export const sender = new Sender()
 
 
 export const createConnection = async (data: IOwner): Promise<IResponseStream> => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         // Criar a sessão Venom
         try {
-            await sender.initialize()
+            sender.initialize()
             resolve({ status_code: 200, message: 'conexão iniciada!' })
         } catch (error: any) {
             reject({ status_code: 500, error: error.message })

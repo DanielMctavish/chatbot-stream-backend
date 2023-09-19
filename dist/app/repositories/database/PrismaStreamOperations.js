@@ -14,7 +14,7 @@ const prisma = new client_1.PrismaClient();
 class PrismaStreamOperations {
     Create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('dentro da operação create >> ', data);
+            //console.log('dentro da operação create >> ', data);
             const { owner_id, stream_lines_responses, welcome_message, stream_title, stream_set } = data;
             return yield prisma.streamChat.create({
                 data: {
@@ -77,6 +77,7 @@ class PrismaStreamOperations {
     }
     UpdateSet(set, stream_id) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield prisma.streamChat.updateMany({ data: { stream_set: false } });
             return yield prisma.streamChat.update({
                 where: { id: stream_id },
                 data: {

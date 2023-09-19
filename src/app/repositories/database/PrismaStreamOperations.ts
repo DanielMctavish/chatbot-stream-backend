@@ -5,8 +5,8 @@ const prisma = new PrismaClient()
 
 class PrismaStreamOperations implements IStreamChatRepositorie {
     async Create(data: IStreamChat): Promise<IStreamChat> {
-        console.log('dentro da operação create >> ', data);
-        
+        //console.log('dentro da operação create >> ', data);
+
         const {
             owner_id,
             stream_lines_responses,
@@ -78,6 +78,9 @@ class PrismaStreamOperations implements IStreamChatRepositorie {
     }
 
     async UpdateSet(set: boolean, stream_id: string): Promise<IStreamChat | null> {
+
+        await prisma.streamChat.updateMany({data: { stream_set: false } })
+
         return await prisma.streamChat.update({
             where: { id: stream_id },
             data: {

@@ -1,10 +1,10 @@
-import { create, Whatsapp, Message, SocketState } from 'venom-bot'
+import { create, Whatsapp } from 'venom-bot'
 import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js'
 import IStreamChat from '../app/entities/IStreamChat'
 
 
 class Sender {
-    private client: Whatsapp | undefined
+    private client: Whatsapp | undefined | null
     private qrCodeBase64: string | undefined
     private isConnected: boolean | undefined
     private statusSession: string | any
@@ -27,9 +27,17 @@ class Sender {
     async setStream(streamChat: IStreamChat) {
         this.client?.onMessage(async message => {
 
+            const senderName = message.sender.name;
+            //(`Nome do remetente: ${senderName}`);
+            const phoneNumber = message.from;
+            //console.log(`Número de telefone do remetente: ${phoneNumber.split('@')[0]}`);
+
             streamChat.stream_lines_responses?.map(line => {
                 if (message.body === line.intent_message && message.isGroupMsg === false) {
                     this.client?.sendText(message.from, line.response_message)
+                } else {
+                    const welcomeMessage: any = streamChat.welcome_message
+                    this.client?.sendText(message.from, welcomeMessage)
                 }
             })
 
@@ -61,6 +69,7 @@ class Sender {
     }
 
     initialize() {
+
         const qr = (base64Qr: string) => {
             this.qrCodeBase64 = base64Qr
         }
@@ -74,12 +83,20 @@ class Sender {
             this.client = client
         }
 
-        create('session-bot', qr, status).then((client) => {
-            start(client)
-        }).catch(err => {
-            console.log(err);
+        const sessionName: any = { session: 'vcodesStream' }
 
-        })
+        this.client?.close()
+
+        create(
+            sessionName,
+            qr,
+            status
+        ).then((client: any) => {
+            start(client)
+            //console.log('client! ->', client);
+        }).catch((erro: any) => {
+            console.log(erro);
+        });
     }
 }
 
