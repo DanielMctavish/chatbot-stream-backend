@@ -2,9 +2,8 @@ import express from "express"
 import cors from "cors"
 import whatsapp_routes from "./routes/WhatsRoutes"
 import stream_routes from "./routes/StreamRoutes"
-import Sender from "../core/VenomWhatsapp"
+import client_routes from "./routes/ClientRoutes"
 
-const sender = new Sender()
 
 const app = express()
 app.use(express.urlencoded({ extended: false }))
@@ -14,12 +13,8 @@ app.use(cors())
 app.get("/", (req, res) => { res.status(200).send("Arboris_codex/VCodes API whatsapp v1.0") })
 app.use("/whatsapp", whatsapp_routes)
 app.use("/stream", stream_routes)
+app.use("/client", client_routes)
 
-
-app.get("/test", (req, res) => {
-    sender.initialize()
-    res.send('ok!')
-})
 
 const PORT = 8945
 app.listen(PORT, () => {

@@ -1,7 +1,11 @@
 import { create, Whatsapp } from 'venom-bot'
 import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js'
-import IStreamChat from '../app/entities/IStreamChat'
+//import IStreamChat from '../app/entities/IStreamChat'
+import PrismaStreamOperations from '../app/repositories/database/PrismaStreamOperations'
+import { p2p } from '../app/packages/P2P'
+import axios from 'axios'
 
+const prismaStream = new PrismaStreamOperations()
 
 class Sender {
     private client: Whatsapp | undefined | null
@@ -24,25 +28,72 @@ class Sender {
         return this.statusSession
     }
 
-    async setStream(streamChat: IStreamChat) {
+    //DINÂMICA DE ENVIO E RECEBIMENTO DE MENSAGENS AQUI ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    async setStream() {
         this.client?.onMessage(async message => {
 
             const senderName = message.sender.name;
             //(`Nome do remetente: ${senderName}`);
+            const senderImg = message.sender.profilePicThumbObj.img;
+            //(`Avatar do remetente: ${senderImg}`);
             const phoneNumber = message.from;
             //console.log(`Número de telefone do remetente: ${phoneNumber.split('@')[0]}`);
 
-            streamChat.stream_lines_responses?.map(line => {
-                if (message.body === line.intent_message && message.isGroupMsg === false) {
-                    this.client?.sendText(message.from, line.response_message)
+            const streamChat = await prismaStream.FindFirstTrue()
+            if (!streamChat) return false
+
+
+            streamChat.stream_lines_responses?.map(async (line: object | any) => {
+
+                if (message.content.split(':')[0] === 'test') {
+                    console.log('opção selecionada foi -->', message.content.split(':')[1]);
+
+                    let currentPackage: string = ''
+                    await p2p.map((pkg, index) => {
+                        if (index === parseInt(message.content.split(':')[1])) currentPackage = pkg.id
+                    })
+
+                    await axios.post(`${process.env.API_BASE_URL}/line/test`, {
+                        iptv_active: 1,
+                        notes: "usuário de teste",
+                        p2p_active: 1,
+                        package_p2p: currentPackage
+                    }, {
+                        headers: {
+                            Authorization: "Bearer " + process.env.TOKEN
+                        }
+                    }).then((response) => {
+                        console.log('resultado do teste --> ', response.data);
+                    }).catch(err => {
+                        console.log('erro de requisição --> ', err.message);
+                    })
+
+                }
+
+                if (message.body === line.intent_message) {
+                    console.log('condição aprovada');
+
+                    if (line.response_message === "#packages") {
+                        this.client?.sendText(message.from,
+                            `Entendi, vou mandar a lista de pacotes que temos:
+
+                            ${p2p.map(pkg => pkg.name).join('\n')}
+
+                            para criar um teste, digite "test" + o número do pacote: 
+                            exemplo: test:1
+                            `)
+                    }
+
                 } else {
                     const welcomeMessage: any = streamChat.welcome_message
                     this.client?.sendText(message.from, welcomeMessage)
                 }
+
             })
 
         })
     }
+    //DINÂMICA DE ENVIO E RECEBIMENTO DE MENSAGENS AQUI ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 
     async sendText(to: string, body: string) {
@@ -100,4 +151,6 @@ class Sender {
     }
 }
 
-export default Sender
+const sender = new Sender()
+
+export default sender

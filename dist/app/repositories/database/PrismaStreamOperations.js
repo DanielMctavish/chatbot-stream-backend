@@ -39,6 +39,16 @@ class PrismaStreamOperations {
             });
         });
     }
+    FindFirstTrue() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield prisma.streamChat.findFirst({
+                where: {
+                    stream_set: true
+                },
+                include: { stream_lines_responses: true }
+            });
+        });
+    }
     FindAll(owner_id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield prisma.streamChat.findMany({

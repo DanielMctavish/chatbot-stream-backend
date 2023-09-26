@@ -1,7 +1,5 @@
 import { Request, Response } from 'express'
 
-
-
 export const ApplyUseCase = (res: Response, usecase: Function, params?: object, data?: object, loginFuncion?: Function, file?: object) => {
     const handle = () => {
         usecase(data, params, file)

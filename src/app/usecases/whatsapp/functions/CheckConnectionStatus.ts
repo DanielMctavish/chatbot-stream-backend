@@ -1,7 +1,7 @@
 import IOwner from "../../../entities/IOwner";
 import IResponseStream from "../../../responses/IResponseStream";
 import PrismaOwnerRepositorie from "../../../repositories/database/PrismaOwnerRepositorie";
-import { sender } from "./CreateConnection";
+import sender from "../../../../core/VenomWhatsapp";
 
 const prismaOwner = new PrismaOwnerRepositorie()
 
@@ -12,5 +12,5 @@ export const checkConnectionStatus = (): Promise<IResponseStream> => {
         const currentStatus = await sender.getStatusSession
         resolve({ status_code: 200, message: currentStatus })
     })
-    
+
 }

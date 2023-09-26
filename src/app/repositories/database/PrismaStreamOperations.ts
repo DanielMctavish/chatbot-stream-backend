@@ -34,6 +34,14 @@ class PrismaStreamOperations implements IStreamChatRepositorie {
             include: { stream_lines_responses: true }
         })
     }
+    async FindFirstTrue(): Promise<IStreamChat | null> {
+        return await prisma.streamChat.findFirst({
+            where: {
+                stream_set: true
+            },
+            include: { stream_lines_responses: true }
+        })
+    }
 
     async FindAll(owner_id: string): Promise<IStreamChat[]> {
         return await prisma.streamChat.findMany({
@@ -79,7 +87,7 @@ class PrismaStreamOperations implements IStreamChatRepositorie {
 
     async UpdateSet(set: boolean, stream_id: string): Promise<IStreamChat | null> {
 
-        await prisma.streamChat.updateMany({data: { stream_set: false } })
+        await prisma.streamChat.updateMany({ data: { stream_set: false } })
 
         return await prisma.streamChat.update({
             where: { id: stream_id },

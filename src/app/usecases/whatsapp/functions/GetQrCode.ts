@@ -1,4 +1,4 @@
-import { sender } from "./CreateConnection";
+import sender from "../../../../core/VenomWhatsapp";
 import IResponseStream from "../../../responses/IResponseStream";
 
 

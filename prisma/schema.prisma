@@ -23,6 +23,8 @@ model Owner {
 model Client {
   id           String  @id @default(cuid())
   phone_number String
+  name         String
+  avatar_url   String
   email        String? @unique
   password     String?
 }
