@@ -1,6 +1,5 @@
 
 interface IClient {
-    id: string
     phone_number: string
     name: string
     avatar_url: string

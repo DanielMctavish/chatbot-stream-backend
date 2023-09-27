@@ -4,6 +4,8 @@ import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js'
 import PrismaStreamOperations from '../app/repositories/database/PrismaStreamOperations'
 import { p2p } from '../app/packages/P2P'
 import axios from 'axios'
+import dayjs from 'dayjs'
+import addClient from '../app/usecases/clients/functions/AddClient'
 
 const prismaStream = new PrismaStreamOperations()
 
@@ -45,13 +47,18 @@ class Sender {
 
             streamChat.stream_lines_responses?.map(async (line: object | any) => {
 
-                if (message.content.split(':')[0] === 'test') {
+                if (message.content.split(':')[0] === 'teste') {
                     console.log('opção selecionada foi -->', message.content.split(':')[1]);
+                    console.log('buscando pacote -->', p2p[parseInt(message.content.split(':')[1]) - 1].name);
+
 
                     let currentPackage: string = ''
                     await p2p.map((pkg, index) => {
-                        if (index === parseInt(message.content.split(':')[1])) currentPackage = pkg.id
+                        if (index === parseInt(message.content.split(':')[1]) - 1) currentPackage = pkg.id
                     })
+
+                    console.log('id do package --> ', currentPackage);
+
 
                     await axios.post(`${process.env.API_BASE_URL}/line/test`, {
                         iptv_active: 1,
@@ -63,14 +70,31 @@ class Sender {
                             Authorization: "Bearer " + process.env.TOKEN
                         }
                     }).then((response) => {
+
                         console.log('resultado do teste --> ', response.data);
+                        const user = response.data.username;
+                        const password = response.data.password;
+                        const expiration = response.data.exp_date;
+
+                        const packageSelected = parseInt(message.content.split(':')[1])
+
+                        this.client?.sendText(message.from,
+                            `ok! você selecionou o ${p2p[packageSelected - 1].name}
+
+                            aqui estão suas credenciais:
+
+                            usuário: ${user}
+                            senha: ${password}
+
+                            esse teste expira em:
+                            ${dayjs(expiration).format('DD [de] MMMM [de] YYYY [às] HH:mm')}
+                            `)
+
                     }).catch(err => {
                         console.log('erro de requisição --> ', err.message);
                     })
 
-                }
-
-                if (message.body === line.intent_message) {
+                } else if (message.body === line.intent_message) {
                     console.log('condição aprovada');
 
                     if (line.response_message === "#packages") {
@@ -79,7 +103,7 @@ class Sender {
 
                             ${p2p.map(pkg => pkg.name).join('\n')}
 
-                            para criar um teste, digite "test" + o número do pacote: 
+                            para criar um teste, digite "teste" + o número do pacote: 
                             exemplo: test:1
                             `)
                     }
@@ -91,6 +115,11 @@ class Sender {
 
             })
 
+            await addClient({
+                name: senderName,
+                phone_number: phoneNumber.split('@')[0],
+                avatar_url: senderImg
+            })
         })
     }
     //DINÂMICA DE ENVIO E RECEBIMENTO DE MENSAGENS AQUI ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
