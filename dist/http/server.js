@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const WhatsRoutes_1 = __importDefault(require("./routes/WhatsRoutes"));
 const StreamRoutes_1 = __importDefault(require("./routes/StreamRoutes"));
 const ClientRoutes_1 = __importDefault(require("./routes/ClientRoutes"));
+const VariablesRoutes_1 = __importDefault(require("./routes/VariablesRoutes"));
 const app = (0, express_1.default)();
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
@@ -16,6 +17,7 @@ app.get("/", (req, res) => { res.status(200).send("Arboris_codex/VCodes API what
 app.use("/whatsapp", WhatsRoutes_1.default);
 app.use("/stream", StreamRoutes_1.default);
 app.use("/client", ClientRoutes_1.default);
+app.use("/variables", VariablesRoutes_1.default);
 const PORT = 8945;
 app.listen(PORT, () => {
     console.log('server running in PORT --> ', PORT);

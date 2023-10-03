@@ -46,3 +46,20 @@ model LinesResponse {
   StreamChat       StreamChat? @relation(fields: [streamChat_id], references: [id])
   streamChat_id    String?
 }
+
+model Variables {
+  id             String           @id @default(cuid())
+  name           String
+  color          String
+  api_url        String?
+  request_method REQUEST_METHODS?
+  body_json      Json?
+}
+
+enum REQUEST_METHODS {
+  GET
+  POST
+  PATCH
+  DELETE
+  PUT
+}

@@ -14,6 +14,7 @@ class Sender {
     private qrCodeBase64: string | undefined
     private isConnected: boolean | undefined
     private statusSession: string | any
+    private welcome_msg_count: number = 0
 
 
     public get getConnection(): boolean {
@@ -47,73 +48,143 @@ class Sender {
 
             streamChat.stream_lines_responses?.map(async (line: object | any) => {
 
-                if (message.content.split(':')[0] === 'teste') {
-                    console.log('opção selecionada foi -->', message.content.split(':')[1]);
-                    console.log('buscando pacote -->', p2p[parseInt(message.content.split(':')[1]) - 1].name);
-
-
-                    let currentPackage: string = ''
-                    await p2p.map((pkg, index) => {
-                        if (index === parseInt(message.content.split(':')[1]) - 1) currentPackage = pkg.id
-                    })
-
-                    console.log('id do package --> ', currentPackage);
-
-
-                    await axios.post(`${process.env.API_BASE_URL}/line/test`, {
-                        iptv_active: 1,
-                        notes: "usuário de teste",
-                        p2p_active: 1,
-                        package_p2p: currentPackage
-                    }, {
-                        headers: {
-                            Authorization: "Bearer " + process.env.TOKEN
-                        }
-                    }).then((response) => {
-
-                        console.log('resultado do teste --> ', response.data);
-                        const user = response.data.username;
-                        const password = response.data.password;
-                        const expiration = response.data.exp_date;
-
-                        const packageSelected = parseInt(message.content.split(':')[1])
-
-                        this.client?.sendText(message.from,
-                            `ok! você selecionou o ${p2p[packageSelected - 1].name}
-
-                            aqui estão suas credenciais:
-
-                            usuário: ${user}
-                            senha: ${password}
-
-                            esse teste expira em:
-                            ${dayjs(expiration).format('DD [de] MMMM [de] YYYY [às] HH:mm')}
-                            `)
-
-                    }).catch(err => {
-                        console.log('erro de requisição --> ', err.message);
-                    })
-
-                } else if (message.body === line.intent_message) {
-                    console.log('condição aprovada');
+                if (message.content === line.intent_message) {
 
                     if (line.response_message === "#packages") {
                         this.client?.sendText(message.from,
                             `Entendi, vou mandar a lista de pacotes que temos:
 
-                            ${p2p.map(pkg => pkg.name).join('\n')}
+${p2p.map(pkg => pkg.name).join('\n')}
 
-                            para criar um teste, digite "teste" + o número do pacote: 
-                            exemplo: test:1
-                            `)
+para criar um teste, digite "teste" + o número do pacote: 
+
+exemplo --> teste:1`)
+
+                        return
                     }
 
-                } else {
-                    const welcomeMessage: any = streamChat.welcome_message
-                    this.client?.sendText(message.from, welcomeMessage)
-                }
+                    if (line.response_message === "#iptv") {
+                        interface Iiptv {
+                            id: number,
+                            package_name: string,
+                            is_trial: number,
+                            is_official: number,
+                            trial_credits: number,
+                            official_credits: number,
+                            trial_duration: number,
+                            trial_duration_in: string,
+                            official_duration: number,
+                            official_duration_in: string,
+                            groups: Array<any>,
+                            bouquets: Array<number>,
+                            output_formats: Array<number>,
+                            is_isplock: number,
+                            max_connections: number,
+                            is_restreamer: number,
+                            force_server_id: number,
+                            forced_country: null,
+                            lock_device: number
+                        }
+                        let iptvList: Array<Iiptv> = []
 
+                        await axios.get(`${process.env.API_BASE_URL}/iptv`, {
+                            headers: {
+                                Authorization: "Bearer " + process.env.TOKEN
+                            }
+                        }).then((response) => {
+                            iptvList = response.data
+                        }).catch(err => {
+                            console.log(err);
+                        })
+
+
+
+                        this.client?.sendText(message.from,
+                            `Entendi, vou mandar a lista de IPTV:
+
+                            ${iptvList.map((iptv: Iiptv) => iptv.package_name).join('\n')}
+
+                            para criar um teste, digite "iptv" + o número do pacote: 
+                            exemplo: iptv:1
+                            `)
+
+                        return
+                    }
+
+                    this.client?.sendText(message.from, line.response_message)
+                    return
+                }
             })
+
+            //SAIR.......................................................................................
+            if (message.content === 'sair') this.welcome_msg_count = 4
+            //MENU.......................................................................................
+            if (message.content === 'menu') this.welcome_msg_count = 0
+            //TESTE P2P...................................................................................
+            if (message.content.split(':')[0] === 'teste') {
+                console.log('opção selecionada foi -->', message.content.split(':')[1]);
+                console.log('buscando pacote -->', p2p[parseInt(message.content.split(':')[1]) - 1].name);
+
+
+                let currentPackage: string = ''
+                await p2p.map((pkg, index) => {
+                    if (index === parseInt(message.content.split(':')[1]) - 1) currentPackage = pkg.id
+                })
+
+                console.log('id do package --> ', currentPackage);
+
+
+                await axios.post(`${process.env.API_BASE_URL}/line/test`, {
+                    iptv_active: 1,
+                    notes: "usuário de teste",
+                    p2p_active: 1,
+                    package_p2p: currentPackage
+                }, {
+                    headers: {
+                        Authorization: "Bearer " + process.env.TOKEN
+                    }
+                }).then((response) => {
+
+                    console.log('resultado do teste --> ', response.data);
+                    const user = response.data.username;
+                    const password = response.data.password;
+                    const expiration = response.data.exp_date;
+
+                    const packageSelected = parseInt(message.content.split(':')[1])
+
+                    this.client?.sendText(message.from,
+                        `ok! você selecionou o ${p2p[packageSelected - 1].name}
+
+                        aqui estão suas credenciais:
+
+                        usuário: ${user}
+                        senha: ${password}
+
+                        esse teste expira em:
+                        ${dayjs(expiration).format('DD [de] MMMM [de] YYYY [às] HH:mm')}
+                        `)
+
+                }).catch(err => {
+                    console.log('erro de requisição --> ', err.message);
+                })
+                return
+            }
+
+            //SE MENSAGEM !== intenção ? WELCOME....................................................
+            let verifyLineTrue = 0
+
+            streamChat.stream_lines_responses?.map((line: object | any) => {
+                if (message.content === line.intent_message) verifyLineTrue++
+            })
+
+            if (this.welcome_msg_count > 2) return false
+            if (verifyLineTrue === 0) {
+                this.welcome_msg_count++
+                const welcomeMessage: any = streamChat.welcome_message
+                this.client?.sendText(message.from, welcomeMessage)
+            }
+
+
 
             await addClient({
                 name: senderName,

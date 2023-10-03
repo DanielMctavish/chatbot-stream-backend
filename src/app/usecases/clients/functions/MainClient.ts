@@ -3,6 +3,7 @@ import IUsecasesClient from "../IUsecasesClient";
 import addClient, { ClientResponse } from "./AddClient";
 import deleteClient from "./DeleteClient";
 import findByNumber from "./FindByNumber";
+import listClients from "./ListClients";
 interface paramsClient {
     id: string
 }
@@ -13,6 +14,9 @@ class MainClient implements IUsecasesClient {
     }
     async FindByNumber(number: string): Promise<ClientResponse> {
         return findByNumber(number)
+    }
+    async FindAll(): Promise<ClientResponse> {
+        return listClients()
     }
     async DeleteClient(data: any, params: paramsClient): Promise<ClientResponse> {
         return deleteClient(params.id)

@@ -35,6 +35,11 @@ class PrismaClientRepositorie implements IClientRepositorie {
         })
     }
 
+    async FindAll(): Promise<IClient[]> {
+        const allClients = await prisma.client.findMany()
+        return allClients;
+    }
+
     async DeleteClient(client_id: string): Promise<IClient> {
         return await prisma.client.delete({
             where: { id: client_id }

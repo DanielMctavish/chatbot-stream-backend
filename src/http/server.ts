@@ -3,6 +3,7 @@ import cors from "cors"
 import whatsapp_routes from "./routes/WhatsRoutes"
 import stream_routes from "./routes/StreamRoutes"
 import client_routes from "./routes/ClientRoutes"
+import variables_routes from "./routes/VariablesRoutes"
 
 
 const app = express()
@@ -14,6 +15,7 @@ app.get("/", (req, res) => { res.status(200).send("Arboris_codex/VCodes API what
 app.use("/whatsapp", whatsapp_routes)
 app.use("/stream", stream_routes)
 app.use("/client", client_routes)
+app.use("/variables", variables_routes)
 
 
 const PORT = 8945

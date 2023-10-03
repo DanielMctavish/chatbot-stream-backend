@@ -8,6 +8,7 @@ const router = Router()
 const mainClient = new MainClient()
 
 router.post("/create", (req, res) => { ApplyUseCase(res, mainClient.AddClient, req.query, req.body) })
+router.get("/list-all", (req, res) => { ApplyUseCase(res, mainClient.FindAll, req.query, req.body) })
 router.delete("/delete", (req, res) => { ApplyUseCase(res, mainClient.DeleteClient, req.query, req.body) })
 
 
