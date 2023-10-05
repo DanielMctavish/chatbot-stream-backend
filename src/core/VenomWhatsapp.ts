@@ -2,12 +2,14 @@ import { create, Whatsapp } from 'venom-bot'
 import { parsePhoneNumber, isValidPhoneNumber } from 'libphonenumber-js'
 //import IStreamChat from '../app/entities/IStreamChat'
 import PrismaStreamOperations from '../app/repositories/database/PrismaStreamOperations'
+import PrismaVariablesRepositorie from '../app/repositories/database/PrismaVariablesRepositorie'
 import { p2p } from '../app/packages/P2P'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import addClient from '../app/usecases/clients/functions/AddClient'
 
 const prismaStream = new PrismaStreamOperations()
+const prismaVariables = new PrismaVariablesRepositorie()
 
 class Sender {
     private client: Whatsapp | undefined | null
@@ -15,7 +17,7 @@ class Sender {
     private isConnected: boolean | undefined
     private statusSession: string | any
     private welcome_msg_count: number = 0
-
+    private defaultStreamMessage: string = ''
 
     public get getConnection(): boolean {
         return !this.isConnected ? false : true
@@ -31,9 +33,19 @@ class Sender {
         return this.statusSession
     }
 
+    public setDefaultMessage(message: string) {
+        this.defaultStreamMessage = message
+    }
+
     //DINÂMICA DE ENVIO E RECEBIMENTO DE MENSAGENS AQUI ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     async setStream() {
         this.client?.onMessage(async message => {
+
+            if (this.defaultStreamMessage) {
+                this.client?.sendText(message.from, this.defaultStreamMessage)
+                return
+            }
+
 
             const senderName = message.sender.name;
             //(`Nome do remetente: ${senderName}`);
@@ -48,72 +60,253 @@ class Sender {
 
             streamChat.stream_lines_responses?.map(async (line: object | any) => {
 
-                if (message.content === line.intent_message) {
+                //VARIABLES RESPONSE...........................................
 
-                    if (line.response_message === "#packages") {
-                        this.client?.sendText(message.from,
-                            `Entendi, vou mandar a lista de pacotes que temos:
+                const AllVariables = await prismaVariables.FindAll()
 
-${p2p.map(pkg => pkg.name).join('\n')}
+                AllVariables.map(async (variable: any) => {
 
-para criar um teste, digite "teste" + o número do pacote: 
+                    console.log('dentro do map --> ', variable);
+                    console.log('observando response --> ', line.response_message.toUpperCase());
+                    console.log('observando método--> ', variable.request_method);
 
-exemplo --> teste:1`)
 
-                        return
-                    }
+                    if (line.response_message.toUpperCase() === `#${variable.name}` && message.content === line.intent_message) {
+                        let stringResponse = ''
+                        switch (variable.request_method) {
+                            case 'GET':
+                                if (variable.api_url)
+                                    await axios.get(variable.api_url, {
+                                        headers: {
+                                            Authorization: "Bearer " + process.env.TOKEN
+                                        }
+                                    }).then(async (response: any) => {
 
-                    if (line.response_message === "#iptv") {
-                        interface Iiptv {
-                            id: number,
-                            package_name: string,
-                            is_trial: number,
-                            is_official: number,
-                            trial_credits: number,
-                            official_credits: number,
-                            trial_duration: number,
-                            trial_duration_in: string,
-                            official_duration: number,
-                            official_duration_in: string,
-                            groups: Array<any>,
-                            bouquets: Array<number>,
-                            output_formats: Array<number>,
-                            is_isplock: number,
-                            max_connections: number,
-                            is_restreamer: number,
-                            force_server_id: number,
-                            forced_country: null,
-                            lock_device: number
+                                        if (Array.isArray(response.data)) {
+                                            await response.data.map((element: any) => {
+                                                if (element.name) {
+                                                    stringResponse += element.name + '\n'
+                                                }
+                                                if (element.package_name) {
+                                                    stringResponse += element.package_name + '\n'
+                                                }
+                                                if (element.username) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                                if (element.password) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                            })
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        } else {
+                                            if (response.data.name) {
+                                                stringResponse += response.data.name + '\n'
+                                            }
+                                            if (response.data.package_name) {
+                                                stringResponse += response.data.package_name + '\n'
+                                            }
+                                            if (response.data.username) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+                                            if (response.data.password) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        }
+
+                                    })
+                                break;
+                            case 'POST':
+                                if (variable.api_url && variable.body_json)
+                                    await axios.post(variable.api_url, variable.body_json, {
+                                        headers: {
+                                            Authorization: "Bearer " + process.env.TOKEN
+                                        }
+                                    }).then(async (response: any) => {
+
+                                        if (Array.isArray(response.data)) {
+                                            await response.data.map((element: any) => {
+                                                if (element.name) {
+                                                    stringResponse += element.name + '\n'
+                                                }
+                                                if (element.package_name) {
+                                                    stringResponse += element.package_name + '\n'
+                                                }
+                                                if (element.username) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                                if (element.password) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                            })
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        } else {
+                                            if (response.data.name) {
+                                                stringResponse += response.data.name + '\n'
+                                            }
+                                            if (response.data.package_name) {
+                                                stringResponse += response.data.package_name + '\n'
+                                            }
+                                            if (response.data.username) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+                                            if (response.data.password) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        }
+
+                                    })
+                                break;
+                            case 'PATCH':
+                                if (variable.api_url && variable.body_json)
+                                    await axios.patch(variable.api_url, variable.body_json, {
+                                        headers: {
+                                            Authorization: "Bearer " + process.env.TOKEN
+                                        }
+                                    }).then(async (response: any) => {
+
+                                        if (Array.isArray(response.data)) {
+                                            await response.data.map((element: any) => {
+                                                if (element.name) {
+                                                    stringResponse += element.name + '\n'
+                                                }
+                                                if (element.package_name) {
+                                                    stringResponse += element.package_name + '\n'
+                                                }
+                                                if (element.username) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                                if (element.password) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                            })
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        } else {
+                                            if (response.data.name) {
+                                                stringResponse += response.data.name + '\n'
+                                            }
+                                            if (response.data.package_name) {
+                                                stringResponse += response.data.package_name + '\n'
+                                            }
+                                            if (response.data.username) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+                                            if (response.data.password) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        }
+
+                                    })
+                                break;
+                            case 'DELETE':
+                                if (variable.api_url)
+                                    await axios.delete(variable.api_url, {
+                                        headers: {
+                                            Authorization: "Bearer " + process.env.TOKEN
+                                        }
+                                    }).then(async (response: any) => {
+
+                                        if (Array.isArray(response.data)) {
+                                            await response.data.map((element: any) => {
+                                                if (element.name) {
+                                                    stringResponse += element.name + '\n'
+                                                }
+                                                if (element.package_name) {
+                                                    stringResponse += element.package_name + '\n'
+                                                }
+                                                if (element.username) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                                if (element.password) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                            })
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        } else {
+                                            if (response.data.name) {
+                                                stringResponse += response.data.name + '\n'
+                                            }
+                                            if (response.data.package_name) {
+                                                stringResponse += response.data.package_name + '\n'
+                                            }
+                                            if (response.data.username) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+                                            if (response.data.password) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        }
+
+                                    })
+                                break;
+                            case 'PUT':
+                                if (variable.api_url && variable.body_json)
+                                    await axios.put(variable.api_url, variable.body_json, {
+                                        headers: {
+                                            Authorization: "Bearer " + process.env.TOKEN
+                                        }
+                                    }).then(async (response: any) => {
+
+                                        if (Array.isArray(response.data)) {
+                                            await response.data.map((element: any) => {
+                                                if (element.name) {
+                                                    stringResponse += element.name + '\n'
+                                                }
+                                                if (element.package_name) {
+                                                    stringResponse += element.package_name + '\n'
+                                                }
+                                                if (element.username) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                                if (element.password) {
+                                                    stringResponse += element.username + '\n'
+                                                }
+                                            })
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        } else {
+                                            if (response.data.name) {
+                                                stringResponse += response.data.name + '\n'
+                                            }
+                                            if (response.data.package_name) {
+                                                stringResponse += response.data.package_name + '\n'
+                                            }
+                                            if (response.data.username) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+                                            if (response.data.password) {
+                                                stringResponse += response.data.username + '\n'
+                                            }
+
+                                            this.client?.sendText(message.from, stringResponse)
+                                        }
+
+                                    })
+                                break;
+                            default:
+
+                                break;
                         }
-                        let iptvList: Array<Iiptv> = []
 
-                        await axios.get(`${process.env.API_BASE_URL}/iptv`, {
-                            headers: {
-                                Authorization: "Bearer " + process.env.TOKEN
-                            }
-                        }).then((response) => {
-                            iptvList = response.data
-                        }).catch(err => {
-                            console.log(err);
-                        })
-
-
-
-                        this.client?.sendText(message.from,
-                            `Entendi, vou mandar a lista de IPTV:
-
-                            ${iptvList.map((iptv: Iiptv) => iptv.package_name).join('\n')}
-
-                            para criar um teste, digite "iptv" + o número do pacote: 
-                            exemplo: iptv:1
-                            `)
-
+                    } else if (message.content === line.intent_message) {
+                        this.client?.sendText(message.from, line.response_message)
                         return
                     }
+                })
 
-                    this.client?.sendText(message.from, line.response_message)
-                    return
-                }
+                //--------------------------------------------------------------------
+
             })
 
             //SAIR.......................................................................................
@@ -178,9 +371,11 @@ exemplo --> teste:1`)
             })
 
             if (this.welcome_msg_count > 2) return false
+
             if (verifyLineTrue === 0) {
                 this.welcome_msg_count++
                 const welcomeMessage: any = streamChat.welcome_message
+
                 this.client?.sendText(message.from, welcomeMessage)
             }
 

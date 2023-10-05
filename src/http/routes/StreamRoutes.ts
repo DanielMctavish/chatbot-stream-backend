@@ -14,5 +14,7 @@ router.patch("/update", (req, res) => { ApplyUseCase(res, MainStream.UpdateStrea
 router.patch("/set-stream", (req, res) => { ApplyUseCase(res, MainStream.SetStream, req.query, req.body) })//
 router.delete("/delete", (req, res) => { ApplyUseCase(res, MainStream.DeleteStreamById, req.query, req.body) })
 
+router.post("/set-default-stream", (req, res) => { ApplyUseCase(res, MainStream.SetDefaultStream, req.query, req.body) })
+
 
 export default router;

@@ -1,10 +1,11 @@
 import IStreamChat from "../../../entities/IStreamChat";
 import IResponseStream from "../../../responses/IResponseStream";
-import IUsecasesStream, { IRequestStream } from "../IUsecasesStream";
+import IUsecasesStream, { IDefaultStream, IRequestStream } from "../IUsecasesStream";
 import createNewStream from "./CreateNewStream";
 import deleteStreamById from "./DeleteStreamById";
 import findAllStreams from "./FindAllStreams";
 import getStreamById from "./GetStreamById";
+import { setDefaultStream } from "./SetDefaultStream";
 import setStream, { IStreamRequest } from "./SetStream";
 import updateStreamById from "./UpdateStreamById";
 
@@ -25,8 +26,11 @@ class MainUsecaseStream implements IUsecasesStream {
     async DeleteStreamById(data: any, params: IRequestStream): Promise<IResponseStream> {
         return await deleteStreamById(params.stream_id)
     }
-    async SetStream(data:IStreamRequest): Promise<IResponseStream> {
+    async SetStream(data: IStreamRequest): Promise<IResponseStream> {
         return await setStream(data)
+    }
+    async SetDefaultStream(data: IDefaultStream): Promise<IResponseStream> {
+        return setDefaultStream(data.message)
     }
 }
 
