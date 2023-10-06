@@ -1,0 +1,4 @@
+2023/09/19-13:52:24.888 1ccc Creating DB C:\Users\Daniel DM\Desktop\BackEnds\vcodes-chatbot-stream-backend\tokens\vcodesStream\Default\File System\000\t\Paths since it was missing.
+2023/09/19-13:52:24.899 1ccc Reusing MANIFEST C:\Users\Daniel DM\Desktop\BackEnds\vcodes-chatbot-stream-backend\tokens\vcodesStream\Default\File System\000\t\Paths/MANIFEST-000001
+2023/09/19-13:52:24.900 1ccc Recovering log #3
+2023/09/19-13:52:24.901 1ccc Reusing old log C:\Users\Daniel DM\Desktop\BackEnds\vcodes-chatbot-stream-backend\tokens\vcodesStream\Default\File System\000\t\Paths/000003.log 
