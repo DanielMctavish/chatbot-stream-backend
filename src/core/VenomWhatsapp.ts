@@ -7,6 +7,7 @@ import { p2p } from '../app/packages/P2P'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import addClient from '../app/usecases/clients/functions/AddClient'
+import loginInstance from '../app/usecases/access/MainLogin'
 
 const prismaStream = new PrismaStreamOperations()
 const prismaVariables = new PrismaVariablesRepositorie()
@@ -66,55 +67,61 @@ class Sender {
 
                 AllVariables.map(async (variable: any) => {
 
-                    console.log('dentro do map --> ', variable);
-                    console.log('observando response --> ', line.response_message.toUpperCase());
-                    console.log('observando método--> ', variable.request_method);
+                    // console.log('dentro do map --> ', variable);
+                    // console.log('observando response --> ', line.response_message.toUpperCase());
+                    // console.log('observando método--> ', variable.request_method);
+                    let stringResponse = ''
 
+                    const responsesByFilter = async (response: any) => {
+
+                        if (Array.isArray(response.data)) {
+                            await response.data.map((element: any) => {
+                                if (element.name) {
+                                    stringResponse += element.name + '\n'
+                                }
+                                if (element.package_name) {
+                                    stringResponse += element.package_name + '\n'
+                                }
+                                if (element.username) {
+                                    stringResponse += element.username + '\n'
+                                }
+                                if (element.password) {
+                                    stringResponse += element.username + '\n'
+                                }
+                            })
+
+                            this.client?.sendText(message.from, stringResponse)
+                        } else {
+                            if (response.data.name) {
+                                stringResponse += response.data.name + '\n'
+                            }
+                            if (response.data.package_name) {
+                                stringResponse += response.data.package_name + '\n'
+                            }
+                            if (response.data.username) {
+                                stringResponse += response.data.username + '\n'
+                            }
+                            if (response.data.password) {
+                                stringResponse += response.data.username + '\n'
+                            }
+
+                            this.client?.sendText(message.from, stringResponse)
+                        }
+
+                    }
 
                     if (line.response_message.toUpperCase() === `#${variable.name}` && message.content === line.intent_message) {
-                        let stringResponse = ''
+
                         switch (variable.request_method) {
                             case 'GET':
                                 if (variable.api_url)
                                     await axios.get(variable.api_url, {
                                         headers: {
-                                            Authorization: "Bearer " + process.env.TOKEN
+                                            Authorization: "Bearer " + loginInstance.tokenInstance
                                         }
                                     }).then(async (response: any) => {
 
-                                        if (Array.isArray(response.data)) {
-                                            await response.data.map((element: any) => {
-                                                if (element.name) {
-                                                    stringResponse += element.name + '\n'
-                                                }
-                                                if (element.package_name) {
-                                                    stringResponse += element.package_name + '\n'
-                                                }
-                                                if (element.username) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                                if (element.password) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                            })
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        } else {
-                                            if (response.data.name) {
-                                                stringResponse += response.data.name + '\n'
-                                            }
-                                            if (response.data.package_name) {
-                                                stringResponse += response.data.package_name + '\n'
-                                            }
-                                            if (response.data.username) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-                                            if (response.data.password) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        }
+                                        await responsesByFilter(response)
 
                                     })
                                 break;
@@ -122,43 +129,11 @@ class Sender {
                                 if (variable.api_url && variable.body_json)
                                     await axios.post(variable.api_url, variable.body_json, {
                                         headers: {
-                                            Authorization: "Bearer " + process.env.TOKEN
+                                            Authorization: "Bearer " + loginInstance.tokenInstance
                                         }
                                     }).then(async (response: any) => {
 
-                                        if (Array.isArray(response.data)) {
-                                            await response.data.map((element: any) => {
-                                                if (element.name) {
-                                                    stringResponse += element.name + '\n'
-                                                }
-                                                if (element.package_name) {
-                                                    stringResponse += element.package_name + '\n'
-                                                }
-                                                if (element.username) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                                if (element.password) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                            })
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        } else {
-                                            if (response.data.name) {
-                                                stringResponse += response.data.name + '\n'
-                                            }
-                                            if (response.data.package_name) {
-                                                stringResponse += response.data.package_name + '\n'
-                                            }
-                                            if (response.data.username) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-                                            if (response.data.password) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        }
+                                        await responsesByFilter(response)
 
                                     })
                                 break;
@@ -166,43 +141,11 @@ class Sender {
                                 if (variable.api_url && variable.body_json)
                                     await axios.patch(variable.api_url, variable.body_json, {
                                         headers: {
-                                            Authorization: "Bearer " + process.env.TOKEN
+                                            Authorization: "Bearer " + loginInstance.tokenInstance
                                         }
                                     }).then(async (response: any) => {
 
-                                        if (Array.isArray(response.data)) {
-                                            await response.data.map((element: any) => {
-                                                if (element.name) {
-                                                    stringResponse += element.name + '\n'
-                                                }
-                                                if (element.package_name) {
-                                                    stringResponse += element.package_name + '\n'
-                                                }
-                                                if (element.username) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                                if (element.password) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                            })
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        } else {
-                                            if (response.data.name) {
-                                                stringResponse += response.data.name + '\n'
-                                            }
-                                            if (response.data.package_name) {
-                                                stringResponse += response.data.package_name + '\n'
-                                            }
-                                            if (response.data.username) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-                                            if (response.data.password) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        }
+                                        await responsesByFilter(response)
 
                                     })
                                 break;
@@ -210,43 +153,11 @@ class Sender {
                                 if (variable.api_url)
                                     await axios.delete(variable.api_url, {
                                         headers: {
-                                            Authorization: "Bearer " + process.env.TOKEN
+                                            Authorization: "Bearer " + loginInstance.tokenInstance
                                         }
                                     }).then(async (response: any) => {
 
-                                        if (Array.isArray(response.data)) {
-                                            await response.data.map((element: any) => {
-                                                if (element.name) {
-                                                    stringResponse += element.name + '\n'
-                                                }
-                                                if (element.package_name) {
-                                                    stringResponse += element.package_name + '\n'
-                                                }
-                                                if (element.username) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                                if (element.password) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                            })
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        } else {
-                                            if (response.data.name) {
-                                                stringResponse += response.data.name + '\n'
-                                            }
-                                            if (response.data.package_name) {
-                                                stringResponse += response.data.package_name + '\n'
-                                            }
-                                            if (response.data.username) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-                                            if (response.data.password) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        }
+                                        await responsesByFilter(response)
 
                                     })
                                 break;
@@ -254,43 +165,11 @@ class Sender {
                                 if (variable.api_url && variable.body_json)
                                     await axios.put(variable.api_url, variable.body_json, {
                                         headers: {
-                                            Authorization: "Bearer " + process.env.TOKEN
+                                            Authorization: "Bearer " + loginInstance.tokenInstance
                                         }
                                     }).then(async (response: any) => {
 
-                                        if (Array.isArray(response.data)) {
-                                            await response.data.map((element: any) => {
-                                                if (element.name) {
-                                                    stringResponse += element.name + '\n'
-                                                }
-                                                if (element.package_name) {
-                                                    stringResponse += element.package_name + '\n'
-                                                }
-                                                if (element.username) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                                if (element.password) {
-                                                    stringResponse += element.username + '\n'
-                                                }
-                                            })
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        } else {
-                                            if (response.data.name) {
-                                                stringResponse += response.data.name + '\n'
-                                            }
-                                            if (response.data.package_name) {
-                                                stringResponse += response.data.package_name + '\n'
-                                            }
-                                            if (response.data.username) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-                                            if (response.data.password) {
-                                                stringResponse += response.data.username + '\n'
-                                            }
-
-                                            this.client?.sendText(message.from, stringResponse)
-                                        }
+                                        await responsesByFilter(response)
 
                                     })
                                 break;
@@ -334,7 +213,7 @@ class Sender {
                     package_p2p: currentPackage
                 }, {
                     headers: {
-                        Authorization: "Bearer " + process.env.TOKEN
+                        Authorization: "Bearer " + loginInstance.tokenInstance
                     }
                 }).then((response) => {
 
