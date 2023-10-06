@@ -27,7 +27,7 @@ app.use("/stream", StreamRoutes_1.default);
 app.use("/client", ClientRoutes_1.default);
 app.use("/variables", VariablesRoutes_1.default);
 app.use("/access", AccessRoutes_1.default);
-const PORT = 443;
+const PORT = 8945;
 app.listen(PORT, () => {
     console.log('server running in PORT --> ', PORT);
 });
