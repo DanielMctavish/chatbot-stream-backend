@@ -6,7 +6,8 @@
   "scripts": {
     "watch": "tsc -w",
     "start:http:dev": "nodemon ./dist/http/server.js",
-    "start:http": "node ./http/dist/server.js"
+    "start:http": "node ./http/dist/server.js",
+    "vercel-build": "npx prisma generate && npx prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
