@@ -13,6 +13,7 @@ const selectStream = (stream_id: string): Promise<IResponseStream> => {
 
             await setStream({ stream_id, stream_set: true })
             await sender.setStream()
+            await sender.setWelcomeCount(0)
             sender.setDefaultMessage('')
 
             resolve({ status_code: 200, message: 'stream setado' })

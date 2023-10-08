@@ -37,6 +37,9 @@ class Sender {
     public setDefaultMessage(message: string) {
         this.defaultStreamMessage = message
     }
+    public setWelcomeCount(count:number){
+        this.welcome_msg_count = count
+    }
 
     //DINÂMICA DE ENVIO E RECEBIMENTO DE MENSAGENS AQUI ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     async setStream() {
@@ -193,9 +196,9 @@ class Sender {
             })
 
             //SAIR.......................................................................................
-            if (message.content === 'sair') this.welcome_msg_count = 4
+            if (message.content.toUpperCase() === 'SAIR') this.welcome_msg_count = 4
             //MENU.......................................................................................
-            if (message.content === 'menu') this.welcome_msg_count = 0
+            if (message.content.toUpperCase() === 'MENU') this.welcome_msg_count = 0
             //TESTE P2P...................................................................................
             if (message.content.split(':')[0] === 'teste') {
                 // console.log('opção selecionada foi -->', message.content.split(':')[1]);
@@ -253,7 +256,14 @@ class Sender {
                 if (message.content === line.intent_message) verifyLineTrue++
             })
 
-            if (this.welcome_msg_count > 2) return false
+            if (this.welcome_msg_count >= 1){
+
+                setTimeout(() => {
+                  this.welcome_msg_count = 0  
+                }, 6 * 60000);
+                return false
+
+            }
 
             if (verifyLineTrue === 0) {
                 this.welcome_msg_count++

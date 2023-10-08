@@ -9,7 +9,7 @@ const listClients = async (): Promise<ClientResponse> => {
         try {
 
             const currentClients = await prismaClient.FindAll()
-            console.log('dentro do client find -->', currentClients);
+            //console.log('dentro do client find -->', currentClients);
 
             resolve({ status_code: 200, message: currentClients })
 
