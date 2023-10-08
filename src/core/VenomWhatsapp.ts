@@ -178,11 +178,15 @@ class Sender {
                                 break;
                         }
 
-                    } else if (message.content === line.intent_message) {
-                        this.client?.sendText(message.from, line.response_message)
-                        return
                     }
                 })
+
+                if (message.content === line.intent_message) {
+                    //console.log('condição atingida', message.content,' ', line.intent_message);
+                    
+                    this.client?.sendText(message.from, line.response_message)
+                    return
+                }
 
                 //--------------------------------------------------------------------
 
@@ -194,8 +198,8 @@ class Sender {
             if (message.content === 'menu') this.welcome_msg_count = 0
             //TESTE P2P...................................................................................
             if (message.content.split(':')[0] === 'teste') {
-                console.log('opção selecionada foi -->', message.content.split(':')[1]);
-                console.log('buscando pacote -->', p2p[parseInt(message.content.split(':')[1]) - 1].name);
+                // console.log('opção selecionada foi -->', message.content.split(':')[1]);
+                // console.log('buscando pacote -->', p2p[parseInt(message.content.split(':')[1]) - 1].name);
 
 
                 let currentPackage: string = ''
@@ -203,7 +207,7 @@ class Sender {
                     if (index === parseInt(message.content.split(':')[1]) - 1) currentPackage = pkg.id
                 })
 
-                console.log('id do package --> ', currentPackage);
+                // console.log('id do package --> ', currentPackage);
 
 
                 await axios.post(`${process.env.API_BASE_URL}/line/test`, {
@@ -217,7 +221,7 @@ class Sender {
                     }
                 }).then((response) => {
 
-                    console.log('resultado do teste --> ', response.data);
+                    //console.log('resultado do teste --> ', response.data);
                     const user = response.data.username;
                     const password = response.data.password;
                     const expiration = response.data.exp_date;

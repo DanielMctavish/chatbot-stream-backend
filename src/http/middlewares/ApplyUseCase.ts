@@ -15,7 +15,7 @@ export const ApplyUseCase = (res: Response, usecase: Function, params?: object, 
                     }) : res.status(response.status_code).json({ msg: response.message })
 
         }).catch((err: any) => {
-            console.log('observando erro ApplyUsecase >>>', err);
+            //console.log('observando erro ApplyUsecase >>>', err);
             res.status(err.status_code).json({ msg: err.message })
         })
 

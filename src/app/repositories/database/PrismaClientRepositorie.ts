@@ -11,7 +11,7 @@ class PrismaClientRepositorie implements IClientRepositorie {
         })
 
         if (currentNumber) {
-            console.log('este número já foi adicionado');
+            //console.log('este número já foi adicionado');
             return null
         } else {
             return await prisma.client.create({
