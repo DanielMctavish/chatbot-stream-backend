@@ -1,3 +1,6 @@
-2023/10/08-14:44:45.575 bd1d Reusing MANIFEST /home/arboris/Área de Trabalho/BACKEND/vcodes-chatbot-stream-backend/tokens/vcodesStream/Default/Local Storage/leveldb/MANIFEST-000001
-2023/10/08-14:44:45.576 bd1d Recovering log #26
-2023/10/08-14:44:45.577 bd1d Reusing old log /home/arboris/Área de Trabalho/BACKEND/vcodes-chatbot-stream-backend/tokens/vcodesStream/Default/Local Storage/leveldb/000026.log 
+2023/10/13-16:21:53.175 29aa Reusing MANIFEST /home/arboris/Área de Trabalho/BACKEND/vcodes-chatbot-stream-backend/tokens/vcodesStream/Default/Local Storage/leveldb/MANIFEST-000001
+2023/10/13-16:21:53.176 29aa Recovering log #26
+2023/10/13-16:21:53.178 29aa Reusing old log /home/arboris/Área de Trabalho/BACKEND/vcodes-chatbot-stream-backend/tokens/vcodesStream/Default/Local Storage/leveldb/000026.log 
+2023/10/13-16:23:53.681 29aa Level-0 table #29: started
+2023/10/13-16:23:53.685 29aa Level-0 table #29: 18922 bytes OK
+2023/10/13-16:23:53.688 29aa Delete type=0 #26
